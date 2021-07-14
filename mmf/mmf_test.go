@@ -31,17 +31,17 @@ func TestMakeMatches(t *testing.T) {
 	dualstackTicket2 := makeTicket(t, mmf.V4Tag, mmf.V6Tag)
 
 	type testCase struct {
-		tickets     []*om.Ticket
+		in          []*om.Ticket
 		wantMatches []*om.Match
 		wantError   error
 	}
 	for name, tt := range map[string]testCase{
 		"NG: v4とv6ユーザー同士ではマッチングしない": {
-			tickets:   []*om.Ticket{v4OnlyTicket1, v6OnlyTicket},
+			in:        []*om.Ticket{v4OnlyTicket1, v6OnlyTicket},
 			wantError: mmf.FailedMatchMakeErr,
 		},
 		"OK: v4同士でマッチングができる": {
-			tickets: []*om.Ticket{v4OnlyTicket1, v4OnlyTicket2},
+			in: []*om.Ticket{v4OnlyTicket1, v4OnlyTicket2},
 			wantMatches: []*om.Match{
 				{
 					MatchProfile:  "fake",
@@ -51,7 +51,7 @@ func TestMakeMatches(t *testing.T) {
 			},
 		},
 		"OK: デュアルスタック同士でマッチングができる": {
-			tickets: []*om.Ticket{dualstackTicket1, dualstackTicket2},
+			in: []*om.Ticket{dualstackTicket1, dualstackTicket2},
 			wantMatches: []*om.Match{
 				{
 					MatchProfile:  "fake",
@@ -61,7 +61,7 @@ func TestMakeMatches(t *testing.T) {
 			},
 		},
 		"OK: v4とデュアルスタック同士でマッチングができる": {
-			tickets: []*om.Ticket{dualstackTicket1, v4OnlyTicket1},
+			in: []*om.Ticket{dualstackTicket1, v4OnlyTicket1},
 			wantMatches: []*om.Match{
 				{
 					MatchProfile:  "fake",
@@ -74,7 +74,7 @@ func TestMakeMatches(t *testing.T) {
 		tt := tt
 		t.Run(name, func(t *testing.T) {
 			pool := map[string][]*om.Ticket{
-				"test-pool": tt.tickets,
+				"test-pool": tt.in,
 			}
 			matches, err := mmf.MakeMatches(pool, profile)
 			if err != nil {
