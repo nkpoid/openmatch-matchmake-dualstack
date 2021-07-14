@@ -40,24 +40,25 @@ func extractTicketsWithTag(tickets []*om.Ticket, tag string) []*om.Ticket {
 // makeMatch は，Ticketの配列を受け取り，1v1のマッチを最大1つ作成します．
 // マッチメイキングに失敗した場合，FailedMatchMakeErrを返却します．
 func makeMatch(tickets []*om.Ticket, profile *om.MatchProfile) (*om.Match, error) {
-	match := &om.Match{
-		MatchId:       uuid.NewString(),
-		MatchProfile:  profile.Name,
-		MatchFunction: MatchFunctionName,
+	generateMatch := func(ts []*om.Ticket) *om.Match {
+		return &om.Match{
+			MatchId:       uuid.NewString(),
+			MatchProfile:  profile.Name,
+			MatchFunction: MatchFunctionName,
+			Tickets:       ts,
+		}
 	}
 
 	// 最初に，v6ユーザーの抽出を試みる
 	v6Tickets := extractTicketsWithTag(tickets, V6Tag)
 	if len(v6Tickets) >= 2 {
-		match.Tickets = v6Tickets[:2]
-		return match, nil
+		return generateMatch(v6Tickets[:2]), nil
 	}
 
 	// 次に，v4ユーザー(含v6 dualstack)の抽出を試みます．
 	v4Tickets := extractTicketsWithTag(tickets, V4Tag)
 	if len(v4Tickets) >= 2 {
-		match.Tickets = v4Tickets[:2]
-		return match, nil
+		return generateMatch(v4Tickets[:2]), nil
 	}
 
 	return nil, FailedMatchMakeErr
