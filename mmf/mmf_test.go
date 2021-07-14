@@ -88,10 +88,6 @@ func TestMakeMatches(t *testing.T) {
 				protocmp.Transform(),
 				protocmp.IgnoreFields(&om.Match{},
 					"match_id",
-					"match_profile",
-					"match_function",
-					"tickets",
-					"extensions",
 				),
 			}
 			if diff := cmp.Diff(matches, tt.wantMatches, opts...); diff != "" {
