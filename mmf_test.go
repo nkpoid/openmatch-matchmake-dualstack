@@ -79,6 +79,7 @@ func TestMakeMatches(t *testing.T) {
 				if !errors.Is(err, tt.wantError) {
 					t.Fatalf("mismatch expected error. want: %v, got %v", tt.wantError, err)
 				}
+				return
 			}
 
 			opts := []cmp.Option{
