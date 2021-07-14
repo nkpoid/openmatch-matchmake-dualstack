@@ -9,8 +9,8 @@ import (
 
 const (
 	MatchFunctionName = "dualstack-demo-match-function"
-	v4Tag             = "v4"
-	v6Tag             = "v6"
+	V4Tag             = "v4"
+	V6Tag             = "v6"
 )
 
 var FailedMatchMakeErr = errors.New("failed to create match")
@@ -47,15 +47,14 @@ func makeMatch(tickets []*om.Ticket, profile *om.MatchProfile) (*om.Match, error
 	}
 
 	// 最初に，v6ユーザーの抽出を試みる
-	v6Tickets := extractTicketsWithTag(tickets, v6Tag)
+	v6Tickets := extractTicketsWithTag(tickets, V6Tag)
 	if len(v6Tickets) >= 2 {
 		match.Tickets = v6Tickets[:2]
 		return match, nil
 	}
 
-
 	// 次に，v4ユーザー(含v6 dualstack)の抽出を試みます．
-	v4Tickets := extractTicketsWithTag(tickets, v4Tag)
+	v4Tickets := extractTicketsWithTag(tickets, V4Tag)
 	if len(v4Tickets) >= 2 {
 		match.Tickets = v4Tickets[:2]
 		return match, nil
