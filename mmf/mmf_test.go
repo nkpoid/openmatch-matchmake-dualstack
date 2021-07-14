@@ -86,9 +86,7 @@ func TestMakeMatches(t *testing.T) {
 
 			opts := []cmp.Option{
 				protocmp.Transform(),
-				protocmp.IgnoreFields(&om.Match{},
-					"match_id",
-				),
+				protocmp.IgnoreFields(&om.Match{}, "match_id"),
 			}
 			if diff := cmp.Diff(matches, tt.wantMatches, opts...); diff != "" {
 				t.Errorf("mismatch. diff: %v", diff)
