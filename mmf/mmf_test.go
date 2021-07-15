@@ -63,7 +63,7 @@ func TestMakeMatches(t *testing.T) {
 				},
 			},
 		},
-		"OK: v4とデュアルスタック同士でマッチングができる": {
+		"OK: v4とデュアルスタックでマッチングができる": {
 			in: []*om.Ticket{dualstackTicket1, v4OnlyTicket1},
 			wantMatches: []*om.Match{
 				{
@@ -73,7 +73,7 @@ func TestMakeMatches(t *testing.T) {
 				},
 			},
 		},
-		"OK: v6同士": {
+		"OK: v6同士でマッチングができる": {
 			in: []*om.Ticket{v6OnlyTicket1, v6OnlyTicket2},
 			wantMatches: []*om.Match{
 				{
@@ -83,7 +83,7 @@ func TestMakeMatches(t *testing.T) {
 				},
 			},
 		},
-		"OK: v6とデュアルスタック": {
+		"OK: v6とデュアルスタックでマッチングができる": {
 			in: []*om.Ticket{dualstackTicket1, v6OnlyTicket1},
 			wantMatches: []*om.Match{
 				{
