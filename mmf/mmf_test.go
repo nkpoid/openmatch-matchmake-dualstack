@@ -12,6 +12,8 @@ import (
 	"github.com/nkpoid/openmatch-matchmake-dualstack/mmf"
 )
 
+const MatchProfileName = "fake"
+
 func makeTicket(t *testing.T, tags ...string) *om.Ticket {
 	t.Helper()
 
@@ -22,11 +24,12 @@ func makeTicket(t *testing.T, tags ...string) *om.Ticket {
 }
 
 func TestMakeMatches(t *testing.T) {
-	profile := &om.MatchProfile{Name: "fake"}
+	profile := &om.MatchProfile{Name: MatchProfileName}
 
 	v4OnlyTicket1 := makeTicket(t, mmf.V4Tag)
 	v4OnlyTicket2 := makeTicket(t, mmf.V4Tag)
-	v6OnlyTicket := makeTicket(t, mmf.V6Tag)
+	v6OnlyTicket1 := makeTicket(t, mmf.V6Tag)
+	v6OnlyTicket2 := makeTicket(t, mmf.V6Tag)
 	dualstackTicket1 := makeTicket(t, mmf.V4Tag, mmf.V6Tag)
 	dualstackTicket2 := makeTicket(t, mmf.V4Tag, mmf.V6Tag)
 
@@ -37,14 +40,14 @@ func TestMakeMatches(t *testing.T) {
 	}
 	for name, tt := range map[string]testCase{
 		"NG: v4とv6ユーザー同士ではマッチングしない": {
-			in:        []*om.Ticket{v4OnlyTicket1, v6OnlyTicket},
+			in:        []*om.Ticket{v4OnlyTicket1, v6OnlyTicket1},
 			wantError: mmf.FailedMatchMakeErr,
 		},
 		"OK: v4同士でマッチングができる": {
 			in: []*om.Ticket{v4OnlyTicket1, v4OnlyTicket2},
 			wantMatches: []*om.Match{
 				{
-					MatchProfile:  "fake",
+					MatchProfile:  MatchProfileName,
 					MatchFunction: mmf.MatchFunctionName,
 					Tickets:       []*om.Ticket{v4OnlyTicket1, v4OnlyTicket2},
 				},
@@ -54,7 +57,7 @@ func TestMakeMatches(t *testing.T) {
 			in: []*om.Ticket{dualstackTicket1, dualstackTicket2},
 			wantMatches: []*om.Match{
 				{
-					MatchProfile:  "fake",
+					MatchProfile:  MatchProfileName,
 					MatchFunction: mmf.MatchFunctionName,
 					Tickets:       []*om.Ticket{dualstackTicket1, dualstackTicket2},
 				},
@@ -64,9 +67,29 @@ func TestMakeMatches(t *testing.T) {
 			in: []*om.Ticket{dualstackTicket1, v4OnlyTicket1},
 			wantMatches: []*om.Match{
 				{
-					MatchProfile:  "fake",
+					MatchProfile:  MatchProfileName,
 					MatchFunction: mmf.MatchFunctionName,
 					Tickets:       []*om.Ticket{dualstackTicket1, v4OnlyTicket1},
+				},
+			},
+		},
+		"OK: v6同士": {
+			in: []*om.Ticket{v6OnlyTicket1, v6OnlyTicket2},
+			wantMatches: []*om.Match{
+				{
+					MatchProfile:  MatchProfileName,
+					MatchFunction: mmf.MatchFunctionName,
+					Tickets:       []*om.Ticket{v6OnlyTicket1, v6OnlyTicket2},
+				},
+			},
+		},
+		"OK: v6とデュアルスタック": {
+			in: []*om.Ticket{dualstackTicket1, v6OnlyTicket1},
+			wantMatches: []*om.Match{
+				{
+					MatchProfile:  MatchProfileName,
+					MatchFunction: mmf.MatchFunctionName,
+					Tickets:       []*om.Ticket{dualstackTicket1, v6OnlyTicket1},
 				},
 			},
 		},
